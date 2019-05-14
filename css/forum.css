@@ -1,0 +1,9 @@
+div.Post-votes {
+  background-color: #fdd835;
+  color: white;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 4px;
+  width: fit-content;
+  margin-left: -5px;
+}
