@@ -20,7 +20,7 @@ class AddSCFPostVotesRelationship {
       $scf_tag = $event->model->discussion->tags->contains('slug', 'SCF');
       $likes_enabled = $event->model->likes;
       if ($first && $scf_tag && $likes_enabled) {
-        $date_limit = new Carbon('first day of March 2019');
+        $date_limit = new Carbon('last day of March 2019');
         $eligible_voters = $event->model->likes->filter(function ($user, $key) use ($date_limit) {
           return $date_limit->greaterThan($user->joined_at);
         });
