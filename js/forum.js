@@ -13,7 +13,7 @@ app.initializers.add("scf-vote-count", () => {
     const post = this.props.post;
     const votes = post.votes();
 
-    if (votes) {
+    if (votes !== undefined) {
       items.add(
         "scf-voted",
         <div className="Post-votes">
