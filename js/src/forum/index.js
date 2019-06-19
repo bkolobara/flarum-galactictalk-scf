@@ -7,22 +7,12 @@ import Discussion from "flarum/models/Discussion";
 import icon from "flarum/helpers/icon";
 import CommentPost from "flarum/components/CommentPost";
 
-import IndexPage from "flarum/components/IndexPage";
 import DiscussionList from "flarum/components/DiscussionList";
-import ScorePage from "./ScorePage";
-
-import Tag from "flarum/tags/models/Tag";
-import DiscussionTaggedPost from "flarum/tags/components/DiscussionTaggedPost";
-import addTagList from "flarum/tags/addTagList";
-import addTagFilter from "flarum/tags/addTagFilter";
-import addTagLabels from "flarum/tags/addTagLabels";
-import addTagControl from "flarum/tags/addTagControl";
-import addTagComposer from "flarum/tags/addTagComposer";
+import DiscussionListItem from "flarum/components/DiscussionListItem";
 
 app.initializers.add("scf-vote-count", () => {
+  // Add eligible votes count to the first post in SCF discussions
   Post.prototype.votes = Model.attribute("votes");
-  Post.prototype.likes = Model.hasMany("likes");
-
   extend(CommentPost.prototype, "footerItems", function(items) {
     const post = this.props.post;
     const votes = post.votes();
@@ -31,15 +21,32 @@ app.initializers.add("scf-vote-count", () => {
       items.add(
         "scf-voted",
         <div className="Post-votes">
-          {icon("fas fa-poll")}
           <span>Eligible votes: {votes}</span>
         </div>
       );
     }
   });
+
+  // Add eligible votes count to to each discussion in the discussion list.
+  Discussion.prototype.votes = Model.attribute("votes");
+  extend(DiscussionListItem.prototype, "infoItems", function(items) {
+    const discussion = this.props.discussion;
+    const votes = discussion.votes();
+
+    if (votes !== undefined) {
+      items.add(
+        "votes",
+        <div className="Discussion-votes">
+          {icon("fas fa-poll")}&nbsp;
+          <span>Eligible votes: {votes}</span>
+        </div>,
+        20
+      );
+    }
+  });
 });
 
-app.initializers.add("view-of-scf-tag-page", () => {
+app.initializers.add("extended-view-of-scf-tag-page", () => {
   extend(DiscussionList.prototype, "requestParams", function(params) {
     if (this.props.params.tags && this.props.params.tags === "SCF") {
       // Show 50 results only on the SCF tag
@@ -60,20 +67,4 @@ app.initializers.add("view-of-scf-tag-page", () => {
       });
     }
   });
-
-  // app.routes.scf = {
-  //   path: "/t/SCF",
-  //   component: ScorePage.component({ tags: "SCF" })
-  // };
-  // app.postComponents.discussionTagged = DiscussionTaggedPost;
-  // app.store.models.tags = Tag;
-  // // As we are changing a foundamental page we need to hack a bit around
-  // const tempIndexPagePrototype = IndexPage.prototype;
-  // IndexPage.prototype = ScorePage.prototype;
-  // addTagList();
-  // addTagFilter();
-  // addTagLabels();
-  // addTagControl();
-  // addTagComposer();
-  // IndexPage.prototype = tempIndexPagePrototype;
 });

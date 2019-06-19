@@ -7,3 +7,8 @@ div.Post-votes {
   width: fit-content;
   margin-left: -5px;
 }
+
+div.Discussion-votes {
+  color: #303011;
+  font-weight: bold;
+}

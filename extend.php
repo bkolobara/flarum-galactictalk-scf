@@ -10,6 +10,6 @@ return [
     ->css(__DIR__.'/css/forum.css'),
 
   function (Dispatcher $events) {
-    $events->subscribe(Listener\AddSCFPostVotesRelationship::class);
+    $events->subscribe(Listener\AddSCFVotesRelationships::class);
   },
 ];
