@@ -46,8 +46,10 @@ class AddSCFVotesRelationships {
     $date_limit = new Carbon('last day of March 2019');
     $now = Carbon::now();
     // Don't count accounts that joined after March or that are suspended.
-    $eligible_voters = $post->likes->filter(function ($user, $key) use ($date_limit, $now) {
-      return $date_limit->greaterThan($user->joined_at) && $now->greaterThan($user->suspended_until);
+    $eligible_voters = $post->likes->filter(function ($user, $key) use ($date_limit, $now, $post) {
+      return $date_limit->greaterThan($user->joined_at)
+             && $now->greaterThan($user->suspended_until)
+             && $post->user->id !== $user->id; // Don't count self likes
     });
     
     return $eligible_voters->count();
